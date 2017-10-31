@@ -1,5 +1,6 @@
 #include "CBS.h"
 #include <iostream>
+#include <algorithm>
 
 HighLevelCBS::HighLevelCBS()
 {
@@ -28,25 +29,30 @@ bool HighLevelCBS::validate_paths_in_node(CTNode& node)
 		}
 	}
 
-// 	//TODO what if all agents are at their goal state initially
-// 	if (lastTimeStep == 0)
-// 	{
-// 		valid_solution = false;
-// 	}
+	// 	//TODO what if all agents are at their goal state initially
+	// 	if (lastTimeStep == 0)
+	// 	{
+	// 		valid_solution = false;
+	// 	}
 
 	for (int i = 0; i < lastTimeStep; i++)
 	{
 		//TODO compare each agent with each agent, is there any other way?
 		for (int j = 0; j < solution.size(); j++)
 		{
+			int a = std::min((int)solution[j]->Nodes.size() - 1, i);
+
 			for (int k = 0; k < solution.size(); k++)
 			{
-				if(j == k)
+				if (j == k)
 					continue;
+			
+				int b = std::min((int)solution[k]->Nodes.size() - 1, i);
 
-				if (*(solution[j]->Nodes[i]) == *(solution[k]->Nodes[i]))
+
+				if (*(solution[j]->Nodes[a]) == *(solution[k]->Nodes[b]))
 				{
-					node.add_conflict(new Conflict(_agents[solution[j]->agentIndex], _agents[solution[k]->agentIndex], solution[j]->Nodes[i], i));
+					node.add_conflict(new Conflict(_agents[solution[j]->agentIndex], _agents[solution[k]->agentIndex], solution[j]->Nodes[a], i));
 					valid_solution = false;
 				}
 			}
@@ -75,7 +81,7 @@ vector < Path*> HighLevelCBS::find_paths_for_all_agents(CTNode &node)
 
 
 void HighLevelCBS::update_solution_by_invoking_low_level(CTNode &node, int agentIndex)
-{	
+{
 	//TODO assert	
 	Vertex *start = _lowLevelSolver.map[_agents[agentIndex]->StartStateX][_agents[agentIndex]->StartStateY];//new Vertex(_agents[i]->StartStateX, _agents[i]->StartStateY);
 	Vertex *goal = _lowLevelSolver.map[_agents[agentIndex]->GoalStateX][_agents[agentIndex]->GoalStateY];//new Vertex(_agents[i]->GoalStateX, _agents[i]->GoalStateY);
@@ -89,54 +95,63 @@ void HighLevelCBS::update_solution_by_invoking_low_level(CTNode &node, int agent
 //TODO better way probably input file
 void HighLevelCBS::init_agents()
 {
-	_agents.push_back(new Agent(0, 0, 0, 2, 3));
-	_agents.push_back(new Agent(1, 2, 0, 0, 3));
+	_agents.push_back(new Agent(0, 2, 2, 2, 0));
+	_agents.push_back(new Agent(1, 1, 3, 0, 0));
 
-	for (int i = 0; i < 10; i++)
+	/*for (int i = 0; i < 10; i++)
 	{
 		if (i != 1)
 		{
 			_lowLevelSolver.map[i][2]->Obstacle = true;
 		}
-	}	
+	}*/
+	_lowLevelSolver.map[0][1]->Obstacle = true;
+	_lowLevelSolver.map[2][1]->Obstacle = true;
+	_lowLevelSolver.map[3][1]->Obstacle = true;
 }
 
 
 vector < Path*> HighLevelCBS::high_level_CBS()
-{	
+{
 	CTNode* root = new CTNode();
 	//root.solution = find individual paths by the low level()
 	root->set_solution(find_paths_for_all_agents(*root));
+	root->cost = get_SIC(root->get_solution());
 	//root.cost = SIC(Root.solution)
 
-	open.push_back(root);
+	_open.push_back(root);
 
-	while (!open.empty())
+	while (!_open.empty())
 	{
-		CTNode& P = get_node_with_lowest_cost();
-
-		print_solution(P);
-
-		bool valid = validate_paths_in_node(P);
-
-		if (valid)
+		CTNode *P;
+		if (get_node_with_lowest_cost(&P))
 		{
-			return P.get_solution();
-		}
+			print_solution(*P);
 
-		Conflict conflict = P.get_first_conflict();
+			bool valid = validate_paths_in_node(*P);
 
-		for (int i = 0; i < 2; i++)
-		{
-			CTNode* new_node = new CTNode();
-			new_node->add_constraints(P.get_constraints(), new Constraint(conflict.Agents[i], conflict.Vertex, conflict.TimeStep));
-			new_node->set_solution(P.get_solution());
-			update_solution_by_invoking_low_level(*new_node, conflict.Agents[i]->Index);
-			//new_node.cost = SIC(A.solution)
-			if (new_node->get_total_cost() < INT_MAX)
+			if (valid)
 			{
-				open.push_back(new_node);
+				return P->get_solution();
 			}
+
+			Conflict conflict = P->get_first_conflict();
+
+			for (int i = 0; i < 2; i++)
+			{
+				CTNode* new_ct_node = new CTNode();
+				new_ct_node->add_constraints(P->get_constraints(), new Constraint(conflict.Agents[i], conflict.Vertex, conflict.TimeStep));
+				new_ct_node->set_solution(P->get_solution());
+				update_solution_by_invoking_low_level(*new_ct_node, conflict.Agents[i]->Index);
+				new_ct_node->cost = get_SIC(new_ct_node->get_solution());// SIC(A.solution)
+																		 // a solution was found how??
+				if (new_ct_node->cost < INT_MAX)
+				{
+					_open.push_back(new_ct_node);
+				}
+			}
+
+			delete P;
 		}
 	}
 }
@@ -147,7 +162,7 @@ void HighLevelCBS::print_solution(CTNode& node)
 
 	for (int k = 0; k < solution.size(); k++)
 	{
-		std::cout <<"Agent " << k << ":"<<std::endl;
+		std::cout << "Agent " << k << ":" << std::endl;
 		for (int i = 0; i < _lowLevelSolver.map.size(); i++)
 		{
 			for (int j = 0; j < _lowLevelSolver.map[i].size(); j++)
@@ -174,7 +189,7 @@ void HighLevelCBS::print_solution(CTNode& node)
 					else
 					{
 						std::cout << "|___| ";
-					}					
+					}
 				}
 			}
 
@@ -187,4 +202,15 @@ void HighLevelCBS::print_solution(CTNode& node)
 float clip(float n, float lower, float upper)
 {
 	return std::max(lower, std::min(n, upper));
+}
+
+int HighLevelCBS::get_SIC(const vector < Path*> &solution)
+{
+	int cost = 0;
+	for (int i = 0; i < solution.size(); i++)
+	{
+		cost += solution[i]->get_cost();
+	}
+
+	return cost;
 }

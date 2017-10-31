@@ -14,7 +14,7 @@ struct Constraint;
 struct Vertex
 {
 	Vertex() :
-		 g(0), h(0), f(0)
+		g(0), h(0), f(0)
 	{
 		Parent = NULL;
 	}
@@ -28,7 +28,7 @@ struct Vertex
 		depth = 0;
 	}
 
-	
+
 	inline bool operator == (const Vertex &v) const
 	{
 		return v.x == this->x && v.y == this->y;
@@ -61,15 +61,22 @@ struct Path
 
 	}
 
+
 	int agentIndex;
 	vector<Vertex*> Nodes;
 	//vector<Vertex*> constraints;
-	vector<Constraint*> _constraints;
+	vector<Constraint*> Constraints;
+
+	//TODO get real cost with nodes cost
+	int get_cost()
+	{
+		return Nodes.size();
+	}
 };
 
 struct Agent
 {
-	Agent(int index, int x1, int y1, int x2, int y2) : Index(index), StartStateX(x1), StartStateY(y1), GoalStateX(x2), GoalStateY(y2)
+	Agent(int index, int startStateX1, int startStateY1, int goalStateX1, int goalStateY1) : Index(index), StartStateX(startStateX1), StartStateY(startStateY1), GoalStateX(goalStateX1), GoalStateY(goalStateY1)
 	{
 		path = new Path(index);
 	}

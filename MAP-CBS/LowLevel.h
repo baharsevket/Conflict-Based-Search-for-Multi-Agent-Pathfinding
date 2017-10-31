@@ -3,10 +3,10 @@
 
 class LowLevelCBS
 {
-	
+
 
 public:
-	
+
 	//Vertex map[10][10];
 
 	//TODO_BAHAR kesin daha guzeli vardýr bu ne sacmalik
@@ -27,7 +27,7 @@ public:
 
 
 	bool AStar(Vertex* start, Vertex* goal, Path &path, const vector<Constraint*> &constraints)
-	{	
+	{
 		clear_map_AStar_values();
 		start->g = 0;
 		start->f = heuristic_cost_estimate(*start, *goal);
@@ -45,20 +45,20 @@ public:
 			//_closed.push_back(current);	
 
 
-// 			for each neighbor of current
-// 				if neighbor in closedSet
-// 					continue		// Ignore the neighbor which is already evaluated.
-// 					// The distance from start to a neighbor
-//				tentative_gScore := gScore[current] + dist_between(current, neighbor)
-// 				  if neighbor not in openSet	// Discover a new node
-// 					  openSet.Add(neighbor)
-// 				  else if tentative_gScore >= gScore[neighbor]
-// 				  continue		// This is not a better path.
-// 
-// 					  // This path is the best until now. Record it!
-// 					  cameFrom[neighbor] := current
-// 					  gScore[neighbor] := tentative_gScore
-// 					  fScore[neighbor] := gScore[neighbor] + heuristic_cost_estimate(neighbor, goal)
+			// 			for each neighbor of current
+			// 				if neighbor in closedSet
+			// 					continue		// Ignore the neighbor which is already evaluated.
+			// 					// The distance from start to a neighbor
+			//				tentative_gScore := gScore[current] + dist_between(current, neighbor)
+			// 				  if neighbor not in openSet	// Discover a new node
+			// 					  openSet.Add(neighbor)
+			// 				  else if tentative_gScore >= gScore[neighbor]
+			// 				  continue		// This is not a better path.
+			// 
+			// 					  // This path is the best until now. Record it!
+			// 					  cameFrom[neighbor] := current
+			// 					  gScore[neighbor] := tentative_gScore
+			// 					  fScore[neighbor] := gScore[neighbor] + heuristic_cost_estimate(neighbor, goal)
 
 			if ((*current) == (*goal))
 			{
@@ -70,18 +70,18 @@ public:
 			fill_neighboors(*current, successors);
 
 			for (int i = 0; i < successors.size(); i++)
-			{				
-// 				if (*successors[i] == *current && new_cost != successors[i]->g)
-// 				{
-// 					int a = 3;
-// 				}
-// 				else 
-					if (std::find(_closed.begin(), _closed.end(), successors[i]) != _closed.end())
+			{
+				// 				if (*successors[i] == *current && new_cost != successors[i]->g)
+				// 				{
+				// 					int a = 3;
+				// 				}
+				// 				else 
+				if (std::find(_closed.begin(), _closed.end(), successors[i]) != _closed.end())
 				{
 					continue;
 				}
 
-					int new_cost = current->g + heuristic_cost_estimate(*successors[i], *current);
+				int new_cost = current->g + heuristic_cost_estimate(*successors[i], *current);
 
 				if (std::find(_open.begin(), _open.end(), successors[i]) == _open.end()
 					&& !has_conflict(successors[i], current->depth + 1, constraints))
@@ -109,7 +109,7 @@ public:
 				successors[i]->depth = current->depth + 1;
 				successors[i]->g = new_cost;
 				successors[i]->f = successors[i]->g + heuristic_cost_estimate(*successors[i], *goal);
-				
+
 			}
 
 			_closed.push_back(current);
@@ -122,7 +122,7 @@ public:
 
 
 private:
-	
+
 	void init_open_and_closed(Vertex* start)
 	{
 		_open.clear();
@@ -145,7 +145,7 @@ private:
 		}
 	}
 
-	void fill_neighboors(const Vertex& node,  vector<Vertex*> &successors) const
+	void fill_neighboors(const Vertex& node, vector<Vertex*> &successors) const
 	{
 		//TODO
 		int xMax = 10, yMax = 10;
@@ -167,20 +167,20 @@ private:
 
 
 		//get 4 in my case, can change it later
-		pair<int,int> neighboorIndices[5];
-		neighboorIndices[0] = make_pair( node.x - 1,node.y);
-		neighboorIndices[1] = make_pair( node.x ,node.y - 1);
-		neighboorIndices[2] = make_pair( node.x ,node.y + 1);
-		neighboorIndices[3] = make_pair( node.x + 1,node.y);
+		pair<int, int> neighboorIndices[5];
+		neighboorIndices[0] = make_pair(node.x - 1, node.y);
+		neighboorIndices[1] = make_pair(node.x, node.y - 1);
+		neighboorIndices[2] = make_pair(node.x, node.y + 1);
+		neighboorIndices[3] = make_pair(node.x + 1, node.y);
 		neighboorIndices[4] = make_pair(node.x, node.y);
-		
+
 		for (int i = 0; i < 5; i++)
 		{
-			if(neighboorIndices[i].first >=0 && neighboorIndices[i].first < xMax
-				&& neighboorIndices[i].second >=0 && neighboorIndices[i].second < yMax)
+			if (neighboorIndices[i].first >= 0 && neighboorIndices[i].first < xMax
+				&& neighboorIndices[i].second >= 0 && neighboorIndices[i].second < yMax)
 			{
 				//Vertex* child = new Vertex(neighboorIndices[i].first, neighboorIndices[i].second);
-				
+
 				Vertex *child = map[neighboorIndices[i].first][neighboorIndices[i].second];
 				if (!child->Obstacle)
 				{
@@ -191,9 +191,9 @@ private:
 	}
 
 
-	int heuristic_cost_estimate(const Vertex& a,const Vertex& b) const
+	int heuristic_cost_estimate(const Vertex& a, const Vertex& b) const
 	{
-		int manhattan_distance = get_manhattan_distance(a, b); 
+		int manhattan_distance = get_manhattan_distance(a, b);
 		return manhattan_distance == 0 ? 1 : manhattan_distance;
 	}
 
@@ -205,7 +205,7 @@ private:
 
 	int get_square_distance_between_nodes(const Vertex& a, const Vertex& b) const
 	{
-		return pow((a.x - b.x),2) + pow((a.y - b.y),2);
+		return pow((a.x - b.x), 2) + pow((a.y - b.y), 2);
 	}
 
 	int get_node_with_least_f(const vector<Vertex*> &list) const
@@ -220,13 +220,13 @@ private:
 				min = list[i]->f;
 				min_index = i;
 			}
-		}		
+		}
 
 		return min_index;
 	}
 
 	Path reconstruct_path(Vertex* node)
-	{		
+	{
 		vector<Vertex*> path_reverse;
 		while (node != NULL)
 		{

@@ -6,7 +6,8 @@
 //TODO general list
 //++ cells with obstacle
 //+- solution for the conflict(needs to be tested)
-//-- cost, get_best_node
+//++ cost, get_best_node
+//-- read from input file
 //-- input with different size grid
 
 //-Note that for a given CT node N, one does not have to save all its cumulative constraints.
