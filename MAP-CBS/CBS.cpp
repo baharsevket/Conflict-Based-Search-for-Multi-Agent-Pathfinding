@@ -4,7 +4,7 @@
 
 HighLevelCBS::HighLevelCBS()
 {
-	init_agents();
+	ReadInput();
 }
 
 
@@ -90,26 +90,6 @@ void HighLevelCBS::update_solution_by_invoking_low_level(CTNode &node, int agent
 	node.set_solution_for_agent(*_agents[agentIndex]);
 	//paths.push_back(_agents[i]->path);
 }
-
-
-//TODO better way probably input file
-void HighLevelCBS::init_agents()
-{
-	_agents.push_back(new Agent(0, 2, 2, 2, 0));
-	_agents.push_back(new Agent(1, 1, 3, 0, 0));
-
-	/*for (int i = 0; i < 10; i++)
-	{
-		if (i != 1)
-		{
-			_lowLevelSolver.map[i][2]->Obstacle = true;
-		}
-	}*/
-	_lowLevelSolver.map[0][1]->Obstacle = true;
-	_lowLevelSolver.map[2][1]->Obstacle = true;
-	_lowLevelSolver.map[3][1]->Obstacle = true;
-}
-
 
 vector < Path*> HighLevelCBS::high_level_CBS()
 {

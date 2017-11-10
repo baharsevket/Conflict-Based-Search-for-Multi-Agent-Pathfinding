@@ -1,0 +1,17 @@
+﻿  CBS.cpp
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\cbsdatastructures.h(73): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\lowlevel.h(271): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\lowlevel.h(316): warning C4010: single-line comment contains line-continuation character
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\cbs.h(168): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\cbs.cpp(25): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Generating Code...
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\cbs.cpp(137): warning C4715: 'HighLevelCBS::high_level_CBS': not all control paths return a value
+  Compiling...
+  main.cpp
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\cbsdatastructures.h(73): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\lowlevel.h(271): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\lowlevel.h(316): warning C4010: single-line comment contains line-continuation character
+c:\users\bahar.sevket\documents\conflict-based-search-for-multi-agent-pathfinding\map-cbs\cbs.h(168): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Generating Code...
+  MAP-CBS.vcxproj -> C:\Users\bahar.sevket\Documents\Conflict-Based-Search-for-Multi-Agent-Pathfinding\x64\Debug\MAP-CBS.exe
+  MAP-CBS.vcxproj -> C:\Users\bahar.sevket\Documents\Conflict-Based-Search-for-Multi-Agent-Pathfinding\x64\Debug\MAP-CBS.pdb (Partial PDB)

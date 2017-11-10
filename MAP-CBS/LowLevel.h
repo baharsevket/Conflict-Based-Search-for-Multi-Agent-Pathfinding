@@ -1,5 +1,11 @@
 #pragma once
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 #include "CBSDataStructures.h"
+
+using namespace std;
 
 class LowLevelCBS
 {
@@ -10,21 +16,36 @@ public:
 	//Vertex map[10][10];
 
 	//TODO_BAHAR kesin daha guzeli vardýr bu ne sacmalik
-	vector<vector<Vertex*>> map;
+	vector<vector<Vertex*>> map;	
 
 	LowLevelCBS()
 	{
-		for (int i = 0; i < 10; i++)
+		
+	}
+
+	void InitializeMap(int height, int width)
+	{
+		_gridHeight = height;
+		_gridWidth = width;
+
+		for (int i = 0; i < _gridHeight; i++)
 		{
 			vector<Vertex*> temp;
 			map.push_back(temp);
-			for (int j = 0; j < 10; j++)
+			for (int j = 0; j < _gridWidth; j++)
 			{
 				map[i].push_back(new Vertex(i, j));
 			}
 		}
 	}
 
+	static void SplitStringByWhiteSpace(string str, vector <string> &cds)
+	{
+		string temp;
+		stringstream s(str);
+		while (s >> temp)
+			cds.push_back(temp);
+	}	
 
 	bool AStar(Vertex* start, Vertex* goal, Path &path, const vector<Constraint*> &constraints)
 	{
@@ -120,8 +141,20 @@ public:
 		return false;
 	}
 
+	int GetWidth()
+	{
+		return _gridWidth;
+	}
+
+	int GetHeight()
+	{
+		return _gridHeight;
+	}
 
 private:
+
+	int _gridWidth;
+	int _gridHeight;
 
 	void init_open_and_closed(Vertex* start)
 	{
@@ -203,7 +236,7 @@ private:
 		return abs(a.x - b.x) + abs(a.y - b.y);
 	}
 
-	int get_square_distance_between_nodes(const Vertex& a, const Vertex& b) const
+	double get_square_distance_between_nodes(const Vertex& a, const Vertex& b) const
 	{
 		return pow((a.x - b.x), 2) + pow((a.y - b.y), 2);
 	}

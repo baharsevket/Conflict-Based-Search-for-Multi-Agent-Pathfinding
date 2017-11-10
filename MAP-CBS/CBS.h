@@ -83,7 +83,6 @@ class HighLevelCBS
 public:
 	HighLevelCBS();
 	vector < Path*> high_level_CBS();
-	void init_agents();
 	int get_SIC(const vector < Path*> &solution);
 
 private:
@@ -120,4 +119,59 @@ private:
 	}
 
 	void print_solution(CTNode& node);
+
+	void ReadInput()
+	{
+		bool readingObstacles = false;
+		bool readingAgents = false;
+		string line;
+		ifstream myfile("input_0.txt");
+		if (myfile.is_open())
+		{
+			while (getline(myfile, line))
+			{
+				cout << line << '\n';
+				if (line.substr(0, 9).compare("GridGraph") == 0)
+				{
+					vector <string> cds;
+					LowLevelCBS::SplitStringByWhiteSpace(line, cds);
+					int gridWidth = atoi(cds[1].c_str());
+					int gridHeight = atoi(cds[2].c_str());
+					_lowLevelSolver.InitializeMap(gridHeight, gridWidth);
+				}
+				else if (line.compare("Obstacles") == 0)
+				{
+					readingObstacles = true;
+				}
+				else if (line.compare("Agents") == 0)
+				{
+					readingObstacles = false;
+					readingAgents = true;
+				}
+				else if (readingObstacles)
+				{
+					vector <string> cds;
+					LowLevelCBS::SplitStringByWhiteSpace(line, cds);
+					for (int i = 0; i < cds.size(); i++)
+					{
+						int index = atoi(cds[i].c_str());
+						_lowLevelSolver.map[index / _lowLevelSolver.GetWidth()][index % _lowLevelSolver.GetWidth()]->Obstacle = true;
+					}
+				}
+				else if (readingAgents)
+				{
+					vector <string> cds;
+					LowLevelCBS::SplitStringByWhiteSpace(line, cds);
+					int startIndex = atoi(cds[0].c_str());
+					int goalIndex = atoi(cds[1].c_str());
+					_agents.push_back(new Agent(_agents.size(), startIndex / _lowLevelSolver.GetWidth(), startIndex %_lowLevelSolver.GetWidth(),
+												goalIndex / _lowLevelSolver.GetWidth(), goalIndex % _lowLevelSolver.GetWidth()));
+				}
+			}
+
+			myfile.close();
+		}
+
+		else cout << "Unable to open file";
+	}
 };
