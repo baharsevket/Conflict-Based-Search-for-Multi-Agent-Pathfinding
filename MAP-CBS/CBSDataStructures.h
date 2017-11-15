@@ -89,6 +89,8 @@ struct Agent
 	int GoalStateX;
 	int GoalStateY;
 
+
+	//TODO this probably not needed here
 	Path *path;
 	//vector<Constraint*> constraints;
 };

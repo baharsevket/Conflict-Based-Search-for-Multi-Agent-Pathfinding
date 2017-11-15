@@ -4,6 +4,7 @@
 class CTNode
 {
 public:
+	int debugIndex;
 	int cost;
 
 
@@ -62,7 +63,11 @@ public:
 
 	void set_solution_for_agent(Agent& agent)
 	{
-		_solution[agent.Index] = agent.path;
+		
+		//_solution[agent.Index] = agent.path;
+		//TODO delete previous path?
+		_solution[agent.Index] = new Path(agent.Index);
+		_solution[agent.Index]->Nodes = std::vector<Vertex*>(agent.path->Nodes);
 	}
 
 
@@ -95,7 +100,7 @@ private:
 	vector < Path*> find_paths_for_all_agents(CTNode &node);
 	void update_solution_by_invoking_low_level(CTNode &node, int agentIndex);
 
-	bool get_node_with_lowest_cost(CTNode** node) 
+	bool retrieve_and_pop_node_with_lowest_cost(CTNode** node) 
 	{
 		int minCostIndex = -1;
 		for (int i = 0; i < _open.size(); i++)

@@ -83,6 +83,7 @@ vector < Path*> HighLevelCBS::find_paths_for_all_agents(CTNode &node)
 void HighLevelCBS::update_solution_by_invoking_low_level(CTNode &node, int agentIndex)
 {
 	//TODO assert	
+	//TODO i should probably not use agent.path
 	Vertex *start = _lowLevelSolver.map[_agents[agentIndex]->StartStateX][_agents[agentIndex]->StartStateY];//new Vertex(_agents[i]->StartStateX, _agents[i]->StartStateY);
 	Vertex *goal = _lowLevelSolver.map[_agents[agentIndex]->GoalStateX][_agents[agentIndex]->GoalStateY];//new Vertex(_agents[i]->GoalStateX, _agents[i]->GoalStateY);
 	_lowLevelSolver.AStar(start, goal, *(_agents[agentIndex]->path), node.get_constraints());
@@ -93,7 +94,10 @@ void HighLevelCBS::update_solution_by_invoking_low_level(CTNode &node, int agent
 
 vector < Path*> HighLevelCBS::high_level_CBS()
 {
+	int debugIndex = 0;
+
 	CTNode* root = new CTNode();
+	root->debugIndex = debugIndex++;
 	//root.solution = find individual paths by the low level()
 	root->set_solution(find_paths_for_all_agents(*root));
 	root->cost = get_SIC(root->get_solution());
@@ -104,7 +108,7 @@ vector < Path*> HighLevelCBS::high_level_CBS()
 	while (!_open.empty())
 	{
 		CTNode *P;
-		if (get_node_with_lowest_cost(&P))
+		if (retrieve_and_pop_node_with_lowest_cost(&P))
 		{
 			print_solution(*P);
 
@@ -127,6 +131,7 @@ vector < Path*> HighLevelCBS::high_level_CBS()
 																		 // a solution was found how??
 				if (new_ct_node->cost < INT_MAX)
 				{
+					new_ct_node->debugIndex = debugIndex++;
 					_open.push_back(new_ct_node);
 				}
 			}
