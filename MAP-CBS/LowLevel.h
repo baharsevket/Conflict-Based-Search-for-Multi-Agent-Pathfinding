@@ -165,9 +165,9 @@ private:
 
 	void clear_map_AStar_values()
 	{
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < _gridWidth; i++)
 		{
-			for (int j = 0; j < 10; j++)
+			for (int j = 0; j < _gridHeight; j++)
 			{
 				map[i][j]->g = 0;
 				map[i][j]->f = 0;
@@ -180,10 +180,6 @@ private:
 
 	void fill_neighboors(const Vertex& node, vector<Vertex*> &successors) const
 	{
-		//TODO
-		int xMax = 10, yMax = 10;
-
-
 		//generate q's 8 successors and set their parents to q
 		// 			vector<Vertex*> successors;
 		// 			for (int i = clip(current->x - 1, 0, xMax); i <= clip(current->x + 1, 0, xMax); i++)
@@ -209,8 +205,8 @@ private:
 
 		for (int i = 0; i < 5; i++)
 		{
-			if (neighboorIndices[i].first >= 0 && neighboorIndices[i].first < xMax
-				&& neighboorIndices[i].second >= 0 && neighboorIndices[i].second < yMax)
+			if (neighboorIndices[i].first >= 0 && neighboorIndices[i].first < _gridWidth
+				&& neighboorIndices[i].second >= 0 && neighboorIndices[i].second < _gridHeight)
 			{
 				//Vertex* child = new Vertex(neighboorIndices[i].first, neighboorIndices[i].second);
 
