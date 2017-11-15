@@ -104,6 +104,7 @@ public:
 
 				int new_cost = current->g + heuristic_cost_estimate(*successors[i], *current);
 
+
 				if (std::find(_open.begin(), _open.end(), successors[i]) == _open.end()
 					&& !has_conflict(successors[i], current->depth + 1, constraints))
 				{
@@ -114,23 +115,21 @@ public:
 						successors[i]->f = current->f;
 						successors[i]->h = current->h;
 					}
-
+					
 					_open.push_back(successors[i]);
 				}
 				else if (new_cost >= successors[i]->g)
 				{
-					if (has_conflict(successors[i], current->depth + 1, constraints))
-					{
-						int a = 5;
-					}
 					continue;
 				}
 
-				successors[i]->Parent = current;
-				successors[i]->depth = current->depth + 1;
-				successors[i]->g = new_cost;
-				successors[i]->f = successors[i]->g + heuristic_cost_estimate(*successors[i], *goal);
-
+				if (!has_conflict(successors[i], current->depth + 1, constraints))
+				{
+					successors[i]->Parent = current;
+					successors[i]->depth = current->depth + 1;
+					successors[i]->g = new_cost;
+					successors[i]->f = successors[i]->g + heuristic_cost_estimate(*successors[i], *goal);
+				}
 			}
 
 			_closed.push_back(current);
