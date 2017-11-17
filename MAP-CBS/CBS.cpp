@@ -11,7 +11,8 @@ HighLevelCBS::HighLevelCBS()
 bool HighLevelCBS::validate_paths_in_node(CTNode& node)
 {
 	bool valid_solution = true;
-
+	node.clear_conflicts();
+	
 	int lastTimeStep = 0;
 	vector < Path*> solution = node.get_solution();
 
@@ -35,6 +36,8 @@ bool HighLevelCBS::validate_paths_in_node(CTNode& node)
 	// 		valid_solution = false;
 	// 	}
 
+
+	//TODO same conflict is added twice for both agents, if all conflicts are added
 	for (int i = 0; i < lastTimeStep; i++)
 	{
 		//TODO compare each agent with each agent, is there any other way?
@@ -54,6 +57,7 @@ bool HighLevelCBS::validate_paths_in_node(CTNode& node)
 				{
 					node.add_conflict(new Conflict(_agents[solution[j]->agentIndex], _agents[solution[k]->agentIndex], solution[j]->Nodes[a], i));
 					valid_solution = false;
+					return valid_solution;
 				}
 			}
 		}

@@ -275,7 +275,7 @@ private:
 	{
 		for (int i = 0; i < constraints.size(); i++)
 		{
-			if (constraints[i]->TimeStep == time && constraints[i]->Vertex == vertex)
+			if (constraints[i]->TimeStep == time && constraints[i]->Vertex->x == vertex->x && constraints[i]->Vertex->y == vertex->y)
 			{
 				return true;
 			}

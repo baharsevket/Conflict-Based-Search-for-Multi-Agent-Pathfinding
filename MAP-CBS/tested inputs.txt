@@ -6,6 +6,7 @@ input_2
 
 4x4:3
 input_4x4_3_bahar_0
+input_0
 
 Not Working:
 4x4:4

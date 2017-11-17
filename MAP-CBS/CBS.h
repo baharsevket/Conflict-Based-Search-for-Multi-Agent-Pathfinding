@@ -25,6 +25,11 @@ public:
 		_conflicts.push_back(new_conflict);
 	}
 
+	void clear_conflicts()
+	{
+		_conflicts.clear();
+	}
+
 	void add_constraints(const vector<Constraint*> old_constraint_list, Constraint* new_constraint)
 	{
 		_constraints.clear();
