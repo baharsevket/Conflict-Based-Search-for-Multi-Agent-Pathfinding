@@ -3,11 +3,36 @@ Working:
 input_0
 input_1
 input_2
+input_3
+input_4
+input_5
+input_6
+input_7
+input_8
+input_9
+input_10
+
+input_4x4_2_bahar_0
 
 4x4:3
-input_4x4_3_bahar_0
 input_0
+input_1
+input_2
+input_4
+input_6
+input_7
+input_8(actually it is 4 agents)
+input_9(actually it is 4 agents)
+input_4x4_3_bahar_0
+
+4x4:4
+input_0 : I put a restriction for A* in order to prevent endless loop
 
 Not Working:
-4x4:4
-input_0
+4x4:3
+input_3: cannot be solved because of goal state conflict that cannot be solved 
+		if the agent stay at its goal state
+input_5: there is goal state conflict that should be solvable
+		(i should add conflicts to all time steps that are in goal state?)		
+
+

@@ -84,15 +84,22 @@ vector < Path*> HighLevelCBS::find_paths_for_all_agents(CTNode &node)
 }
 
 
-void HighLevelCBS::update_solution_by_invoking_low_level(CTNode &node, int agentIndex)
+bool HighLevelCBS::update_solution_by_invoking_low_level(CTNode &node, int agentIndex)
 {
 	//TODO assert	
 	//TODO i should probably not use agent.path
 	Vertex *start = _lowLevelSolver.map[_agents[agentIndex]->StartStateX][_agents[agentIndex]->StartStateY];//new Vertex(_agents[i]->StartStateX, _agents[i]->StartStateY);
 	Vertex *goal = _lowLevelSolver.map[_agents[agentIndex]->GoalStateX][_agents[agentIndex]->GoalStateY];//new Vertex(_agents[i]->GoalStateX, _agents[i]->GoalStateY);
-	_lowLevelSolver.AStar(start, goal, *(_agents[agentIndex]->path), node.get_constraints());
-	_agents[agentIndex]->path->agentIndex = agentIndex;
-	node.set_solution_for_agent(*_agents[agentIndex]);
+	if (_lowLevelSolver.AStar(start, goal, *(_agents[agentIndex]->path), node.get_constraints()))
+	{
+		_agents[agentIndex]->path->agentIndex = agentIndex;
+		node.set_solution_for_agent(*_agents[agentIndex]);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 	//paths.push_back(_agents[i]->path);
 }
 
@@ -120,7 +127,7 @@ vector < Path*> HighLevelCBS::high_level_CBS()
 
 			if (valid)
 			{
-				return P->get_solution();
+ 				return P->get_solution();
 			}
 
 			Conflict conflict = P->get_first_conflict();
@@ -130,14 +137,18 @@ vector < Path*> HighLevelCBS::high_level_CBS()
 				CTNode* new_ct_node = new CTNode();
 				new_ct_node->add_constraints(P->get_constraints(), new Constraint(conflict.Agents[i], conflict.Vertex, conflict.TimeStep));
 				new_ct_node->set_solution(P->get_solution());
-				update_solution_by_invoking_low_level(*new_ct_node, conflict.Agents[i]->Index);
-				new_ct_node->cost = get_SIC(new_ct_node->get_solution());// SIC(A.solution)
-																		 // a solution was found how??
-				if (new_ct_node->cost < INT_MAX)
+				bool path_found = update_solution_by_invoking_low_level(*new_ct_node, conflict.Agents[i]->Index);
+
+				if (path_found)
 				{
-					new_ct_node->debugIndex = debugIndex++;
-					_open.push_back(new_ct_node);
-				}
+					new_ct_node->cost = get_SIC(new_ct_node->get_solution());// SIC(A.solution)
+																			 // a solution was found how??
+					if (new_ct_node->cost < INT_MAX)
+					{
+						new_ct_node->debugIndex = debugIndex++;
+						_open.push_back(new_ct_node);
+					}
+				}				
 			}
 
 			delete P;

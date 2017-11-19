@@ -103,7 +103,7 @@ private:
 
 	bool validate_paths_in_node(CTNode& node);
 	vector < Path*> find_paths_for_all_agents(CTNode &node);
-	void update_solution_by_invoking_low_level(CTNode &node, int agentIndex);
+	bool update_solution_by_invoking_low_level(CTNode &node, int agentIndex);
 
 	bool retrieve_and_pop_node_with_lowest_cost(CTNode** node) 
 	{

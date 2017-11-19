@@ -1,8 +1,7 @@
 Graph
 GridGraph 4 4
 Obstacles
-9 10 12 
+4 8 14 15 
 Agents
-2 14
-5 13
-0 3
+2 12
+0 10

@@ -57,7 +57,8 @@ public:
 
 		//int timeStep = 0;
 
-		while (!_open.empty())
+		//TODO_BAHAR need better limit case to terminate a*
+		while (!_open.empty() && _closed.size() < _gridHeight * _gridWidth * 20)
 		{
 			int index = get_node_with_least_f(_open);
 			Vertex* current = _open[index];
@@ -97,6 +98,16 @@ public:
 				// 					int a = 3;
 				// 				}
 				// 				else 
+
+				if (successors[i]->x == current->x && successors[i]->y == current->y)
+				{
+					successors[i] = new Vertex(current->x, current->y, false);
+					successors[i]->g = current->g;
+					successors[i]->f = current->f;
+					successors[i]->h = current->h;
+				}
+
+
 				if (std::find(_closed.begin(), _closed.end(), successors[i]) != _closed.end())
 				{
 					continue;
@@ -107,15 +118,7 @@ public:
 
 				if (std::find(_open.begin(), _open.end(), successors[i]) == _open.end()
 					&& !has_conflict(successors[i], current->depth + 1, constraints))
-				{
-					if (successors[i] == current)
-					{
-						successors[i] = new Vertex(current->x, current->y, false);
-						successors[i]->g = current->g;
-						successors[i]->f = current->f;
-						successors[i]->h = current->h;
-					}
-					
+				{					
 					_open.push_back(successors[i]);
 				}
 				else if (new_cost >= successors[i]->g)
