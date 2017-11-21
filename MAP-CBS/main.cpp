@@ -4,11 +4,13 @@
 
 
 //TODO general list
+//--throw exception when input cannot be read   
+
 //++ cells with obstacle
-//+- solution for the conflict(needs to be tested)
+//++ solution for the conflict(needs to be tested)
 //++ cost, get_best_node
-//-- read from input file
-//-- input with different size grid
+//++ read from input file
+//++ input with different size grid
 
 //-Note that for a given CT node N, one does not have to save all its cumulative constraints.
 //Instead, it can save only its latest constraint and extract the other constraints by traversing the path from N to the root via its ancestors.

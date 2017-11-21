@@ -57,7 +57,8 @@ public:
 
 		//int timeStep = 0;
 
-		while (!_open.empty())
+		//TODO_BAHAR need better limit case to terminate a*
+		while (!_open.empty() && _closed.size() < _gridHeight * _gridWidth * 20)
 		{
 			int index = get_node_with_least_f(_open);
 			Vertex* current = _open[index];
@@ -97,6 +98,16 @@ public:
 				// 					int a = 3;
 				// 				}
 				// 				else 
+
+				if (successors[i]->x == current->x && successors[i]->y == current->y)
+				{
+					successors[i] = new Vertex(current->x, current->y, false);
+					successors[i]->g = current->g;
+					successors[i]->f = current->f;
+					successors[i]->h = current->h;
+				}
+
+
 				if (std::find(_closed.begin(), _closed.end(), successors[i]) != _closed.end())
 				{
 					continue;
@@ -104,33 +115,24 @@ public:
 
 				int new_cost = current->g + heuristic_cost_estimate(*successors[i], *current);
 
+
 				if (std::find(_open.begin(), _open.end(), successors[i]) == _open.end()
 					&& !has_conflict(successors[i], current->depth + 1, constraints))
-				{
-					if (successors[i] == current)
-					{
-						successors[i] = new Vertex(current->x, current->y, false);
-						successors[i]->g = current->g;
-						successors[i]->f = current->f;
-						successors[i]->h = current->h;
-					}
-
+				{					
 					_open.push_back(successors[i]);
 				}
 				else if (new_cost >= successors[i]->g)
 				{
-					if (has_conflict(successors[i], current->depth + 1, constraints))
-					{
-						int a = 5;
-					}
 					continue;
 				}
 
-				successors[i]->Parent = current;
-				successors[i]->depth = current->depth + 1;
-				successors[i]->g = new_cost;
-				successors[i]->f = successors[i]->g + heuristic_cost_estimate(*successors[i], *goal);
-
+				if (!has_conflict(successors[i], current->depth + 1, constraints))
+				{
+					successors[i]->Parent = current;
+					successors[i]->depth = current->depth + 1;
+					successors[i]->g = new_cost;
+					successors[i]->f = successors[i]->g + heuristic_cost_estimate(*successors[i], *goal);
+				}
 			}
 
 			_closed.push_back(current);
@@ -165,9 +167,9 @@ private:
 
 	void clear_map_AStar_values()
 	{
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < _gridWidth; i++)
 		{
-			for (int j = 0; j < 10; j++)
+			for (int j = 0; j < _gridHeight; j++)
 			{
 				map[i][j]->g = 0;
 				map[i][j]->f = 0;
@@ -180,10 +182,6 @@ private:
 
 	void fill_neighboors(const Vertex& node, vector<Vertex*> &successors) const
 	{
-		//TODO
-		int xMax = 10, yMax = 10;
-
-
 		//generate q's 8 successors and set their parents to q
 		// 			vector<Vertex*> successors;
 		// 			for (int i = clip(current->x - 1, 0, xMax); i <= clip(current->x + 1, 0, xMax); i++)
@@ -209,8 +207,8 @@ private:
 
 		for (int i = 0; i < 5; i++)
 		{
-			if (neighboorIndices[i].first >= 0 && neighboorIndices[i].first < xMax
-				&& neighboorIndices[i].second >= 0 && neighboorIndices[i].second < yMax)
+			if (neighboorIndices[i].first >= 0 && neighboorIndices[i].first < _gridWidth
+				&& neighboorIndices[i].second >= 0 && neighboorIndices[i].second < _gridHeight)
 			{
 				//Vertex* child = new Vertex(neighboorIndices[i].first, neighboorIndices[i].second);
 
@@ -280,7 +278,7 @@ private:
 	{
 		for (int i = 0; i < constraints.size(); i++)
 		{
-			if (constraints[i]->TimeStep == time && constraints[i]->Vertex == vertex)
+			if (constraints[i]->TimeStep == time && constraints[i]->Vertex->x == vertex->x && constraints[i]->Vertex->y == vertex->y)
 			{
 				return true;
 			}

@@ -4,6 +4,7 @@
 class CTNode
 {
 public:
+	int debugIndex;
 	int cost;
 
 
@@ -22,6 +23,11 @@ public:
 	void add_conflict(Conflict* new_conflict)
 	{
 		_conflicts.push_back(new_conflict);
+	}
+
+	void clear_conflicts()
+	{
+		_conflicts.clear();
 	}
 
 	void add_constraints(const vector<Constraint*> old_constraint_list, Constraint* new_constraint)
@@ -62,7 +68,11 @@ public:
 
 	void set_solution_for_agent(Agent& agent)
 	{
-		_solution[agent.Index] = agent.path;
+		
+		//_solution[agent.Index] = agent.path;
+		//TODO delete previous path?
+		_solution[agent.Index] = new Path(agent.Index);
+		_solution[agent.Index]->Nodes = std::vector<Vertex*>(agent.path->Nodes);
 	}
 
 
@@ -93,9 +103,9 @@ private:
 
 	bool validate_paths_in_node(CTNode& node);
 	vector < Path*> find_paths_for_all_agents(CTNode &node);
-	void update_solution_by_invoking_low_level(CTNode &node, int agentIndex);
+	bool update_solution_by_invoking_low_level(CTNode &node, int agentIndex);
 
-	bool get_node_with_lowest_cost(CTNode** node) 
+	bool retrieve_and_pop_node_with_lowest_cost(CTNode** node) 
 	{
 		int minCostIndex = -1;
 		for (int i = 0; i < _open.size(); i++)
