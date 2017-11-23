@@ -21,12 +21,21 @@ input_2
 input_4
 input_6
 input_7
-input_8(actually it is 4 agents)
-input_9(actually it is 4 agents)
+input_8(4 agents)
+input_9(4 agents)
 input_4x4_3_bahar_0
 
 4x4:4
 input_0 : I put a restriction for A* in order to prevent endless loop
+input_1
+input_2
+input_3
+input_4(5 agents)
+input_5(5 agents)
+input_6(5 agents)
+input_7
+input_8
+input_9
 
 Not Working:
 4x4:3
