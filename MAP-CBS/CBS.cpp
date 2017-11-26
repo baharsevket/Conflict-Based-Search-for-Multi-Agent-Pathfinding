@@ -4,11 +4,10 @@
 
 HighLevelCBS::HighLevelCBS()
 {
-	ReadInput();
 }
 
 
-bool HighLevelCBS::validate_paths_in_node(CTNode& node)
+bool HighLevelCBS::ValidatePathsInNode(CTNode& node)
 {
 	bool valid_solution = true;
 	node.clear_conflicts();
@@ -68,7 +67,7 @@ bool HighLevelCBS::validate_paths_in_node(CTNode& node)
 
 
 //TODO instead of return maybe reference
-vector < Path*> HighLevelCBS::find_paths_for_all_agents(CTNode &node)
+vector < Path*> HighLevelCBS::FindPathsForAllAgents(CTNode &node)
 {
 	vector<Path*> paths;
 	for (int i = 0; i < _agents.size(); i++)
@@ -84,7 +83,7 @@ vector < Path*> HighLevelCBS::find_paths_for_all_agents(CTNode &node)
 }
 
 
-bool HighLevelCBS::update_solution_by_invoking_low_level(CTNode &node, int agentIndex)
+bool HighLevelCBS::UpdateSolutionByInvokingLowLevel(CTNode &node, int agentIndex)
 {
 	//TODO assert	
 	//TODO i should probably not use agent.path
@@ -103,15 +102,15 @@ bool HighLevelCBS::update_solution_by_invoking_low_level(CTNode &node, int agent
 	//paths.push_back(_agents[i]->path);
 }
 
-vector < Path*> HighLevelCBS::high_level_CBS()
+vector < Path*> HighLevelCBS::RunCBS()
 {
 	int debugIndex = 0;
 
 	CTNode* root = new CTNode();
 	root->debugIndex = debugIndex++;
 	//root.solution = find individual paths by the low level()
-	root->set_solution(find_paths_for_all_agents(*root));
-	root->cost = get_SIC(root->get_solution());
+	root->set_solution(FindPathsForAllAgents(*root));
+	root->cost = GetSIC(root->get_solution());
 	//root.cost = SIC(Root.solution)
 
 	_open.push_back(root);
@@ -121,9 +120,9 @@ vector < Path*> HighLevelCBS::high_level_CBS()
 		CTNode *P;
 		if (retrieve_and_pop_node_with_lowest_cost(&P))
 		{
-			print_solution(*P);
+			PrintSolution(*P);
 
-			bool valid = validate_paths_in_node(*P);
+			bool valid = ValidatePathsInNode(*P);
 
 			if (valid)
 			{
@@ -137,11 +136,11 @@ vector < Path*> HighLevelCBS::high_level_CBS()
 				CTNode* new_ct_node = new CTNode();
 				new_ct_node->add_constraints(P->get_constraints(), new Constraint(conflict.Agents[i], conflict.Vertex, conflict.TimeStep));
 				new_ct_node->set_solution(P->get_solution());
-				bool path_found = update_solution_by_invoking_low_level(*new_ct_node, conflict.Agents[i]->Index);
+				bool path_found = UpdateSolutionByInvokingLowLevel(*new_ct_node, conflict.Agents[i]->Index);
 
 				if (path_found)
 				{
-					new_ct_node->cost = get_SIC(new_ct_node->get_solution());// SIC(A.solution)
+					new_ct_node->cost = GetSIC(new_ct_node->get_solution());// SIC(A.solution)
 																			 // a solution was found how??
 					if (new_ct_node->cost < INT_MAX)
 					{
@@ -156,7 +155,7 @@ vector < Path*> HighLevelCBS::high_level_CBS()
 	}
 }
 
-void HighLevelCBS::print_solution(CTNode& node)
+void HighLevelCBS::PrintSolution(CTNode& node)
 {
 	vector<Path*> solution = node.get_solution();
 
@@ -199,12 +198,12 @@ void HighLevelCBS::print_solution(CTNode& node)
 }
 
 
-float clip(float n, float lower, float upper)
+float Clip(float n, float lower, float upper)
 {
 	return std::max(lower, std::min(n, upper));
 }
 
-int HighLevelCBS::get_SIC(const vector < Path*> &solution)
+int HighLevelCBS::GetSIC(const vector < Path*> &solution)
 {
 	int cost = 0;
 	for (int i = 0; i < solution.size(); i++)

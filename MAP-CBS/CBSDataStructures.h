@@ -126,5 +126,5 @@ struct Conflict
 
 
 
-float clip(float n, float lower, float upper);
+float Clip(float n, float lower, float upper);
 

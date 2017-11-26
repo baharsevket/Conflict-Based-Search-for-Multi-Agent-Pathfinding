@@ -92,43 +92,8 @@ class HighLevelCBS
 {
 public:
 	HighLevelCBS();
-	vector < Path*> high_level_CBS();
-	int get_SIC(const vector < Path*> &solution);
-
-private:
-
-	LowLevelCBS _lowLevelSolver;
-	vector <Agent*> _agents;
-	vector<CTNode*> _open;
-
-	bool validate_paths_in_node(CTNode& node);
-	vector < Path*> find_paths_for_all_agents(CTNode &node);
-	bool update_solution_by_invoking_low_level(CTNode &node, int agentIndex);
-
-	bool retrieve_and_pop_node_with_lowest_cost(CTNode** node) 
-	{
-		int minCostIndex = -1;
-		for (int i = 0; i < _open.size(); i++)
-		{
-			int tempCost = _open[i]->cost;
-			if (minCostIndex == -1 || _open[i]->cost < _open[minCostIndex]->cost)
-			{
-				minCostIndex = i;
-			}
-		}
-
-		if (minCostIndex != -1)
-		{
-			*node = _open[minCostIndex];
-			_open[minCostIndex] = _open.back();
-			_open.pop_back();
-			return true;
-		}
-
-		return false;
-	}
-
-	void print_solution(CTNode& node);
+	vector < Path*> RunCBS();
+	int GetSIC(const vector < Path*> &solution);
 
 	void ReadInput()
 	{
@@ -175,7 +140,7 @@ private:
 					int startIndex = atoi(cds[0].c_str());
 					int goalIndex = atoi(cds[1].c_str());
 					_agents.push_back(new Agent(_agents.size(), startIndex / _lowLevelSolver.GetWidth(), startIndex %_lowLevelSolver.GetWidth(),
-												goalIndex / _lowLevelSolver.GetWidth(), goalIndex % _lowLevelSolver.GetWidth()));
+						goalIndex / _lowLevelSolver.GetWidth(), goalIndex % _lowLevelSolver.GetWidth()));
 				}
 			}
 
@@ -184,4 +149,41 @@ private:
 
 		else cout << "Unable to open file";
 	}
+
+private:
+
+	LowLevelCBS _lowLevelSolver;
+	vector <Agent*> _agents;
+	vector<CTNode*> _open;
+
+	bool ValidatePathsInNode(CTNode& node);
+	vector < Path*> FindPathsForAllAgents(CTNode &node);
+	bool UpdateSolutionByInvokingLowLevel(CTNode &node, int agentIndex);
+
+	bool retrieve_and_pop_node_with_lowest_cost(CTNode** node) 
+	{
+		int minCostIndex = -1;
+		for (int i = 0; i < _open.size(); i++)
+		{
+			int tempCost = _open[i]->cost;
+			if (minCostIndex == -1 || _open[i]->cost < _open[minCostIndex]->cost)
+			{
+				minCostIndex = i;
+			}
+		}
+
+		if (minCostIndex != -1)
+		{
+			*node = _open[minCostIndex];
+			_open[minCostIndex] = _open.back();
+			_open.pop_back();
+			return true;
+		}
+
+		return false;
+	}
+
+	void PrintSolution(CTNode& node);
+
+	
 };

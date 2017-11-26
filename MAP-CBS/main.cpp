@@ -1,4 +1,5 @@
 //#include "CBSDataStructures.h"
+#include <exception>
 #include <iostream>
 #include "CBS.h"
 
@@ -20,9 +21,16 @@
 
 int main()
 {
-
-	HighLevelCBS CBS;
-	CBS.high_level_CBS();
+	try
+	{
+		HighLevelCBS CBS;
+		CBS.ReadInput();
+		CBS.RunCBS();
+	}
+	catch (exception e)
+	{
+		cout << "Unable to read input!" << endl;
+	}
 
 	return 0;
 }

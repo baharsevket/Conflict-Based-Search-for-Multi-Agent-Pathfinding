@@ -49,11 +49,11 @@ public:
 
 	bool AStar(Vertex* start, Vertex* goal, Path &path, const vector<Constraint*> &constraints)
 	{
-		clear_map_AStar_values();
+		ClearMapAStarValues();
 		start->g = 0;
-		start->f = heuristic_cost_estimate(*start, *goal);
+		start->f = HeuristicCostEstimate(*start, *goal);
 		start->depth = 0;
-		init_open_and_closed(start);
+		InitOpenAndClosed(start);
 
 		//int timeStep = 0;
 
@@ -84,12 +84,12 @@ public:
 
 			if ((*current) == (*goal))
 			{
-				path = reconstruct_path(current);
+				path = ReconstructPath(current);
 				return true;
 			}
 
 			vector<Vertex*> successors;
-			fill_neighboors(*current, successors);
+			FillNeighboors(*current, successors);
 
 			for (int i = 0; i < successors.size(); i++)
 			{
@@ -113,11 +113,11 @@ public:
 					continue;
 				}
 
-				int new_cost = current->g + heuristic_cost_estimate(*successors[i], *current);
+				int new_cost = current->g + HeuristicCostEstimate(*successors[i], *current);
 
 
 				if (std::find(_open.begin(), _open.end(), successors[i]) == _open.end()
-					&& !has_conflict(successors[i], current->depth + 1, constraints))
+					&& !HasConflict(successors[i], current->depth + 1, constraints))
 				{					
 					_open.push_back(successors[i]);
 				}
@@ -126,12 +126,12 @@ public:
 					continue;
 				}
 
-				if (!has_conflict(successors[i], current->depth + 1, constraints))
+				if (!HasConflict(successors[i], current->depth + 1, constraints))
 				{
 					successors[i]->Parent = current;
 					successors[i]->depth = current->depth + 1;
 					successors[i]->g = new_cost;
-					successors[i]->f = successors[i]->g + heuristic_cost_estimate(*successors[i], *goal);
+					successors[i]->f = successors[i]->g + HeuristicCostEstimate(*successors[i], *goal);
 				}
 			}
 
@@ -158,14 +158,14 @@ private:
 	int _gridWidth;
 	int _gridHeight;
 
-	void init_open_and_closed(Vertex* start)
+	void InitOpenAndClosed(Vertex* start)
 	{
 		_open.clear();
 		_closed.clear();
 		_open.push_back(start);
 	}
 
-	void clear_map_AStar_values()
+	void ClearMapAStarValues()
 	{
 		for (int i = 0; i < _gridWidth; i++)
 		{
@@ -180,7 +180,7 @@ private:
 		}
 	}
 
-	void fill_neighboors(const Vertex& node, vector<Vertex*> &successors) const
+	void FillNeighboors(const Vertex& node, vector<Vertex*> &successors) const
 	{
 		//generate q's 8 successors and set their parents to q
 		// 			vector<Vertex*> successors;
@@ -222,7 +222,7 @@ private:
 	}
 
 
-	int heuristic_cost_estimate(const Vertex& a, const Vertex& b) const
+	int HeuristicCostEstimate(const Vertex& a, const Vertex& b) const
 	{
 		int manhattan_distance = get_manhattan_distance(a, b);
 		return manhattan_distance == 0 ? 1 : manhattan_distance;
@@ -256,7 +256,7 @@ private:
 		return min_index;
 	}
 
-	Path reconstruct_path(Vertex* node)
+	Path ReconstructPath(Vertex* node)
 	{
 		vector<Vertex*> path_reverse;
 		while (node != NULL)
@@ -274,7 +274,7 @@ private:
 		return new_path;
 	}
 
-	bool has_conflict(Vertex* vertex, int time, const vector<Constraint*> &constraints)
+	bool HasConflict(Vertex* vertex, int time, const vector<Constraint*> &constraints)
 	{
 		for (int i = 0; i < constraints.size(); i++)
 		{
